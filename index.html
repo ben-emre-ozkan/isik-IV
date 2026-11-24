@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IŞIK CITY — Işık Üniversitesi | Wanted: Geleceğin Liderleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;600;800&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff2e88; --hot:#ff4fa3; --orange:#ff8a3d; --sun:#ffd23f;
+  --cyan:#29f0ff; --purple:#7b2ff7; --deep:#12001f; --ink:#08000f;
+  --white:#fff6fb;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:Inter,system-ui,sans-serif;overflow-x:hidden;cursor:none}
+a,button{cursor:none}
+::selection{background:var(--pink);color:#fff}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--pink),var(--orange));border-radius:8px}
+
+/* ---------- PRELOADER ---------- */
+#loader{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at 50% 120%,#ff2e8855,transparent 60%),var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:clip-path 1.2s cubic-bezier(.77,0,.18,1)}
+#loader.done{clip-path:circle(0% at 50% 50%)}
+#loader .logo{font-family:Anton;font-size:clamp(60px,12vw,160px);letter-spacing:.02em;line-height:.85;text-align:center;
+  background:linear-gradient(180deg,var(--sun),var(--orange) 45%,var(--pink) 75%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px #ff2e8888);animation:pulse 1.6s ease-in-out infinite}
+#loader .logo small{display:block;font-family:"Bebas Neue";font-size:.25em;letter-spacing:.6em;color:var(--white);-webkit-text-fill-color:var(--white)}
+#loader .bar{width:min(420px,70vw);height:4px;background:#ffffff15;border-radius:4px;overflow:hidden}
+#loader .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--sun));box-shadow:0 0 20px var(--pink)}
+#loader .pct{font-family:"Bebas Neue";letter-spacing:.4em;font-size:18px;opacity:.8}
+#loader .tip{font-size:13px;opacity:.55;max-width:420px;text-align:center;padding:0 20px}
+@keyframes pulse{50%{filter:drop-shadow(0 0 60px #ff2e88cc) brightness(1.15)}}
+
+/* ---------- CURSOR ---------- */
+#cursor,#cursorDot{position:fixed;top:0;left:0;pointer-events:none;z-index:9998;border-radius:50%;mix-blend-mode:screen}
+#cursor{width:46px;height:46px;border:2px solid var(--pink);box-shadow:0 0 20px var(--pink),inset 0 0 20px var(--pink);transition:width .25s,height .25s,border-color .25s}
+#cursor.big{width:90px;height:90px;border-color:var(--cyan);box-shadow:0 0 30px var(--cyan),inset 0 0 30px var(--cyan)}
+#cursorDot{width:6px;height:6px;background:#fff;box-shadow:0 0 12px #fff}
+#trail{position:fixed;inset:0;pointer-events:none;z-index:9997}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;top:22px;right:26px;z-index:900;text-align:right;font-family:"Bebas Neue";pointer-events:none}
+.hud .money{font-size:34px;color:#7dff8a;text-shadow:0 0 12px #3dff6a,2px 2px 0 #000;letter-spacing:.05em}
+.hud .stars{display:flex;gap:4px;justify-content:flex-end;margin-top:2px}
+.hud .stars svg{width:30px;height:30px;transition:transform .4s cubic-bezier(.3,2,.5,1)}
+.hud .stars svg path{fill:#ffffff18;stroke:#fff;stroke-width:1.2;transition:fill .4s}
+.hud .stars svg.on{transform:scale(1.15) rotate(8deg)}
+.hud .stars svg.on path{fill:var(--sun);filter:drop-shadow(0 0 6px var(--sun))}
+.hud .stars.flash svg.on path{animation:starflash .35s steps(2) 4}
+@keyframes starflash{50%{fill:#2f7bff}}
+.hud .lvl{font-size:13px;letter-spacing:.35em;opacity:.75;margin-top:4px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:800;display:flex;align-items:center;gap:34px;padding:22px 40px;
+  background:linear-gradient(#08000fcc,transparent);backdrop-filter:blur(2px)}
+nav .brand{font-family:Anton;font-size:28px;letter-spacing:.04em;background:linear-gradient(90deg,var(--sun),var(--pink));-webkit-background-clip:text;color:transparent}
+nav a.l{color:#fff;text-decoration:none;font-family:"Bebas Neue";font-size:20px;letter-spacing:.15em;opacity:.75;position:relative;transition:opacity .3s}
+nav a.l:hover{opacity:1}
+nav a.l::after{content:"";position:absolute;left:0;bottom:-4px;height:2px;width:0;background:var(--pink);box-shadow:0 0 10px var(--pink);transition:width .35s}
+nav a.l:hover::after{width:100%}
+@media(max-width:860px){nav a.l{display:none}}
+
+/* radar */
+.radar{position:fixed;left:26px;bottom:26px;width:130px;height:130px;border-radius:50%;z-index:900;pointer-events:none;
+  background:radial-gradient(circle,#1b0b2ecc 0 60%,#0d0018ee);border:3px solid #ffffff30;overflow:hidden;box-shadow:0 0 30px #7b2ff766}
+.radar::before{content:"";position:absolute;inset:0;background:conic-gradient(from 0deg,transparent 0 300deg,#29f0ff66 360deg);animation:spin 3s linear infinite}
+.radar::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(#ffffff12 1px,transparent 1px) 0 0/22px 22px,linear-gradient(90deg,#ffffff12 1px,transparent 1px) 0 0/22px 22px}
+.radar .me{position:absolute;left:50%;top:50%;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:16px solid #fff;transform:translate(-50%,-60%);z-index:2;filter:drop-shadow(0 0 4px #fff)}
+.radar .blip{position:absolute;width:9px;height:9px;border-radius:50%;z-index:2;animation:blink 1.4s infinite}
+.radar .health{position:absolute;bottom:0;left:0;right:0;height:6px;display:flex;z-index:3}
+.radar .health i{flex:1;background:#3dff6a}.radar .health i+i{background:#29a8ff}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:.2}}
+@media(max-width:700px){.radar{width:90px;height:90px}}
+
+/* ---------- HERO ---------- */
+#hero{position:relative;height:100vh;min-height:680px;overflow:hidden;
+  background:linear-gradient(180deg,#1a0033 0%,#4a0a5e 28%,#b8226e 52%,#ff6a3d 70%,#ffb03d 80%,#2a0a3d 81%,#12001f 100%)}
+#hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.sun{position:absolute;left:50%;top:44%;width:min(46vw,560px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);
+  background:linear-gradient(180deg,#fff3a8,#ffd23f 30%,#ff8a3d 60%,#ff2e88);
+  -webkit-mask:repeating-linear-gradient(180deg,#000 0 14px,transparent 14px 18px),linear-gradient(#000 0 55%,transparent 55%);
+  -webkit-mask-composite:source-over;mask:linear-gradient(#000 0 52%,transparent 52%) ,repeating-linear-gradient(180deg,#000 0 12px,transparent 12px 20px);
+  box-shadow:0 0 160px 40px #ff8a3d88;filter:drop-shadow(0 0 60px #ff2e88)}
+.sun.glow{-webkit-mask:none;mask:none;filter:blur(60px);opacity:.75}
+.rays{position:absolute;left:50%;top:44%;width:220vmax;height:220vmax;transform:translate(-50%,-50%);
+  background:repeating-conic-gradient(from 0deg,#ffd23f22 0 4deg,transparent 4deg 14deg);
+  -webkit-mask:radial-gradient(circle,#000 0,transparent 45%);mask:radial-gradient(circle,#000 0,transparent 45%);
+  animation:spin 80s linear infinite;mix-blend-mode:screen}
+.sea{position:absolute;left:0;right:0;bottom:0;height:19%;overflow:hidden;
+  background:linear-gradient(180deg,#ff6a3d 0%,#7b1f6a 20%,#1a0533 100%)}
+.sea::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 6px,#ffd23f33 6px 8px);animation:waves 3s linear infinite}
+.sea .refl{position:absolute;left:50%;top:0;width:30%;height:100%;transform:translateX(-50%);
+  background:repeating-linear-gradient(180deg,#ffd23f 0 3px,transparent 3px 11px);-webkit-mask:linear-gradient(#000,transparent);mask:linear-gradient(#000,transparent);filter:blur(1px);opacity:.8;animation:shimmer 2s ease-in-out infinite}
+@keyframes waves{to{background-position:0 16px}}
+@keyframes shimmer{50%{width:36%;opacity:.5}}
+.grid-floor{position:absolute;left:-50%;right:-50%;bottom:0;height:19%;perspective:300px;pointer-events:none;opacity:.45}
+.grid-floor div{position:absolute;inset:0;transform:rotateX(70deg);transform-origin:bottom;
+  background:linear-gradient(var(--pink) 2px,transparent 2px) 0 0/80px 60px,linear-gradient(90deg,var(--pink) 2px,transparent 2px) 0 0/80px 60px;
+  animation:gridmove 1.5s linear infinite;-webkit-mask:linear-gradient(transparent,#000 60%);mask:linear-gradient(transparent,#000 60%)}
+@keyframes gridmove{to{background-position:0 60px,0 0}}
+.skyline{position:absolute;left:0;right:0;bottom:18.6%;height:28%;pointer-events:none}
+.skyline svg{width:100%;height:100%}
+.palm{position:absolute;bottom:14%;pointer-events:none;transform-origin:bottom center;animation:sway 6s ease-in-out infinite}
+.palm svg{display:block;height:100%;width:auto}
+.palm.l{left:-3%;height:78%}
+.palm.l2{left:12%;height:52%;animation-delay:-2s;opacity:.9}
+.palm.r{right:-4%;height:86%;animation-delay:-1s;transform:scaleX(-1)}
+.palm.r2{right:13%;height:48%;animation-delay:-3s;opacity:.9}
+@keyframes sway{0%,100%{rotate:-1.5deg}50%{rotate:1.8deg}}
+
+.hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:5;pointer-events:none;padding:0 20px}
+.hero-kicker{font-family:"Bebas Neue";letter-spacing:.7em;font-size:clamp(14px,1.6vw,22px);color:var(--cyan);text-shadow:0 0 14px var(--cyan);opacity:0;transform:translateY(20px)}
+.hero-title{font-family:Anton;font-size:clamp(90px,21vw,330px);line-height:.82;letter-spacing:-.01em;display:flex;margin:10px 0 0;position:relative}
+.hero-title span{display:inline-block;padding:0 .01em .34em;margin-bottom:-.34em;opacity:0;transform:translateY(120%) rotate(12deg) scale(.6);
+  background:linear-gradient(180deg,#fff 0%,#fff3a8 15%,var(--sun) 30%,var(--orange) 47%,var(--pink) 65%,#c04bff 85%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:2px #ffffff30;filter:drop-shadow(0 6px 0 #4a0a5e) drop-shadow(0 0 40px #ff2e88aa)}
+.hero-title.glitch::before,.hero-title.glitch::after{content:attr(data-t);position:absolute;inset:0;padding:0 .01em;font:inherit;letter-spacing:inherit;color:transparent;pointer-events:none}
+.hero-title.glitch::before{-webkit-text-stroke:2px var(--cyan);animation:g1 3.2s infinite steps(1)}
+.hero-title.glitch::after{-webkit-text-stroke:2px var(--pink);animation:g2 2.7s infinite steps(1)}
+.hero-title.glitch::before,.hero-title.glitch::after{opacity:0}
+@keyframes g1{0%,92%,99%{opacity:0;transform:none;clip-path:inset(0 0 100% 0)}93%{opacity:1;transform:translate(-8px,2px);clip-path:inset(20% 0 50% 0)}96%{opacity:1;transform:translate(6px,-3px);clip-path:inset(60% 0 10% 0)}}
+@keyframes g2{0%,88%,99%{opacity:0;transform:none;clip-path:inset(0 0 100% 0)}89%{opacity:1;transform:translate(8px,-2px);clip-path:inset(40% 0 30% 0)}93%{opacity:1;transform:translate(-5px,4px);clip-path:inset(5% 0 75% 0)}}
+.hero-sub{font-family:"Permanent Marker";font-size:clamp(22px,3vw,44px);color:#fff;text-shadow:0 0 20px var(--pink),3px 3px 0 #4a0a5e;transform:rotate(-4deg) scale(.4);opacity:0;margin-top:-.2em}
+.hero-cta{margin-top:38px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center;pointer-events:auto;opacity:0;transform:translateY(30px)}
+.btn{position:relative;font-family:"Bebas Neue";font-size:22px;letter-spacing:.2em;padding:16px 38px;border:none;color:#fff;text-decoration:none;
+  background:linear-gradient(90deg,var(--pink),var(--orange));clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);
+  box-shadow:0 0 40px #ff2e8866;transition:transform .25s, filter .25s;overflow:hidden;display:inline-block}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,#fff8,transparent);transform:skewX(-20deg);transition:left .6s}
+.btn:hover{transform:translateY(-3px) scale(1.04);filter:brightness(1.15)}
+.btn:hover::after{left:130%}
+.btn.ghost{background:transparent;box-shadow:inset 0 0 0 2px var(--cyan),0 0 30px #29f0ff44;color:var(--cyan)}
+.scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:6;font-family:"Bebas Neue";letter-spacing:.5em;font-size:13px;opacity:.8;text-align:center}
+.scroll-hint i{display:block;width:2px;height:46px;margin:10px auto 0;background:linear-gradient(var(--pink),transparent);animation:drip 1.6s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.vignette{position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,#08000fcc 100%)}
+.scan{position:fixed;inset:0;z-index:950;pointer-events:none;background:repeating-linear-gradient(180deg,#0000 0 2px,#0000000d 2px 3px);mix-blend-mode:multiply}
+.noise{position:fixed;inset:-50%;z-index:951;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:noise .6s steps(4) infinite}
+@keyframes noise{25%{transform:translate(3%,-4%)}50%{transform:translate(-5%,2%)}75%{transform:translate(4%,5%)}}
+
+/* ---------- MARQUEE ---------- */
+.marquee{position:relative;z-index:10;background:linear-gradient(90deg,var(--pink),var(--orange),var(--sun));transform:rotate(-2deg) scale(1.05);margin:-30px 0 0;padding:16px 0;overflow:hidden;box-shadow:0 0 60px #ff2e8888}
+.marquee.b{background:#0d0018;transform:rotate(2deg) scale(1.05);margin-top:-48px;box-shadow:inset 0 0 0 2px var(--cyan),0 0 40px #29f0ff55;z-index:9}
+.marquee .track{display:flex;width:max-content;animation:mq 22s linear infinite}
+.marquee.b .track{animation-direction:reverse;animation-duration:28s}
+.marquee span{font-family:Anton;font-size:clamp(26px,4vw,50px);color:#12001f;white-space:nowrap;padding:0 28px;text-transform:uppercase}
+.marquee.b span{color:transparent;-webkit-text-stroke:1.5px var(--cyan)}
+.marquee span b{color:#fff;font-weight:400}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- SECTIONS ---------- */
+section{position:relative;padding:150px 6vw;overflow:hidden}
+.sec-head{margin-bottom:70px;position:relative;z-index:2}
+.sec-num{margin-bottom:14px;font-family:"Bebas Neue";font-size:16px;letter-spacing:.5em;color:var(--cyan);text-shadow:0 0 12px var(--cyan)}
+.sec-title{font-family:Anton;font-size:clamp(54px,9vw,140px);line-height:1;text-transform:uppercase}
+.sec-title .grad{background:linear-gradient(90deg,var(--sun),var(--orange),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-title .out{color:transparent;-webkit-text-stroke:2px #fff}
+.sec-desc{max-width:560px;opacity:.7;font-size:18px;line-height:1.6;margin-top:22px}
+
+.reveal{opacity:0;transform:translateY(70px);transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.split .w{display:inline-block;overflow:hidden;vertical-align:top}
+.split .w>i{display:inline-block;font-style:normal;transform:translateY(110%) rotate(6deg);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.split.in .w>i{transform:none}
+
+/* blobs */
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;pointer-events:none;z-index:0}
+
+/* ---------- MISSIONS ---------- */
+#gorevler{background:radial-gradient(ellipse at top,#2b0a45,transparent 60%),var(--ink)}
+.missions{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;position:relative;z-index:2;perspective:1200px}
+.mission{position:relative;padding:34px 30px 30px;border-radius:6px;min-height:380px;display:flex;flex-direction:column;
+  background:linear-gradient(160deg,#ffffff10,#ffffff03);border:1px solid #ffffff1c;backdrop-filter:blur(8px);
+  transform-style:preserve-3d;transition:transform .15s ease-out,box-shadow .4s,border-color .4s;overflow:hidden}
+.mission::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(140deg,var(--c1),transparent 40%,transparent 60%,var(--c2));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;transition:opacity .4s}
+.mission:hover{box-shadow:0 30px 80px -20px var(--c1);border-color:transparent}
+.mission:hover::before{opacity:1}
+.mission .shine{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),#ffffff2a,transparent 45%);opacity:0;transition:opacity .3s}
+.mission:hover .shine{opacity:1}
+.mission .tag{font-family:"Bebas Neue";letter-spacing:.3em;font-size:14px;color:var(--c1);display:flex;justify-content:space-between;align-items:center}
+.mission .icon{font-size:58px;margin:26px 0 14px;transform:translateZ(60px);filter:drop-shadow(0 0 20px var(--c1))}
+.mission h3{font-family:Anton;font-size:36px;line-height:1;text-transform:uppercase;transform:translateZ(40px)}
+.mission p{opacity:.7;line-height:1.55;margin-top:14px;flex:1;transform:translateZ(20px)}
+.mission .reward{margin-top:22px;display:flex;justify-content:space-between;align-items:center;font-family:"Bebas Neue";letter-spacing:.12em;font-size:18px;border-top:1px dashed #ffffff25;padding-top:16px}
+.mission .reward b{color:#7dff8a;font-weight:400;text-shadow:0 0 10px #3dff6a}
+.mstars{display:flex;gap:2px}.mstars i{width:14px;height:14px;background:var(--sun);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);opacity:.25}
+.mstars i.f{opacity:1;filter:drop-shadow(0 0 4px var(--sun))}
+
+/* ---------- STATS / WANTED ---------- */
+#wanted{background:linear-gradient(180deg,var(--ink),#1a0029 50%,var(--ink));text-align:center}
+.poster-wrap{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;text-align:left;position:relative;z-index:2}
+@media(max-width:900px){.poster-wrap{grid-template-columns:1fr}}
+.poster{position:relative;background:#f3e3c3;color:#2a1405;padding:34px;transform:rotate(-3deg);box-shadow:0 40px 80px #000a,0 0 0 10px #d8c39b inset;font-family:Anton;text-align:center;max-width:460px;justify-self:center}
+.poster::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 10%,transparent 40%,#7a4a1a30);pointer-events:none}
+.poster h4{font-size:84px;line-height:.9;letter-spacing:.04em}
+.poster .sub{font-family:"Bebas Neue";font-size:22px;letter-spacing:.3em}
+.poster .photo{margin:20px auto;width:100%;aspect-ratio:4/3;background:linear-gradient(180deg,#ffb03d,#ff2e88 60%,#4a0a5e);position:relative;overflow:hidden;filter:sepia(.35) contrast(1.1)}
+.poster .photo::before{content:"🎓";position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);font-size:120px;filter:drop-shadow(0 6px 0 #0005)}
+.poster .photo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 22px,#0002 22px 23px)}
+.poster .reward-p{font-size:50px;color:#9c1a1a}
+.poster .stamp{position:absolute;right:-30px;top:40%;font-family:"Permanent Marker";font-size:34px;color:#e0174f;border:4px solid #e0174f;padding:6px 18px;transform:rotate(18deg) scale(2.5);opacity:0;transition:all .5s cubic-bezier(.3,1.6,.5,1);background:#f3e3c3cc}
+.poster.in .stamp{transform:rotate(18deg) scale(1);opacity:1;transition-delay:.7s}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat{padding:28px;border-left:3px solid var(--c);background:linear-gradient(90deg,#ffffff0d,transparent)}
+.stat .n{font-family:Anton;font-size:clamp(50px,6vw,84px);line-height:1;color:var(--c);text-shadow:0 0 30px var(--c)}
+.stat .t{font-family:"Bebas Neue";letter-spacing:.25em;font-size:17px;opacity:.75;margin-top:6px}
+
+/* ---------- HORIZONTAL MAP ---------- */
+#harita{padding:0;height:400vh;background:var(--ink);overflow:visible}
+#harita .sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center}
+#harita .h-title{position:absolute;top:12vh;left:6vw;z-index:3}
+.h-track{display:flex;gap:5vw;padding:0 6vw 0 40vw;will-change:transform;align-items:center;margin-top:10vh}
+.loc{flex:0 0 min(560px,78vw);height:62vh;position:relative;border-radius:8px;overflow:hidden;
+  background:var(--bg);box-shadow:0 40px 100px -30px var(--glow)}
+.loc .scene{position:absolute;inset:0}
+.loc .info{position:absolute;left:0;right:0;bottom:0;padding:30px;background:linear-gradient(transparent,#08000ff0 60%)}
+.loc .info small{font-family:"Bebas Neue";letter-spacing:.4em;color:var(--glow)}
+.loc .info h3{font-family:Anton;font-size:clamp(40px,5vw,66px);text-transform:uppercase;line-height:.95}
+.loc .info p{opacity:.75;margin-top:8px;line-height:1.5}
+.loc .pin{position:absolute;top:24px;right:24px;width:54px;height:54px;border-radius:50%;background:var(--glow);display:grid;place-items:center;font-size:26px;box-shadow:0 0 0 0 var(--glow);animation:ping 2s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 var(--glow)}100%{box-shadow:0 0 0 30px transparent}}
+.h-progress{position:absolute;bottom:8vh;left:6vw;right:6vw;height:2px;background:#ffffff15;z-index:3}
+.h-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));box-shadow:0 0 14px var(--pink)}
+
+/* ---------- STORY ---------- */
+#hikaye{background:radial-gradient(ellipse at 80% 30%,#3b0a4e,transparent 55%),var(--ink)}
+.timeline{position:relative;max-width:1000px;margin:0 auto;z-index:2}
+.timeline::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:#ffffff15;transform:translateX(-50%)}
+.timeline .fill{position:absolute;left:50%;top:0;width:3px;height:0;background:linear-gradient(var(--cyan),var(--pink),var(--sun));transform:translateX(-50%);box-shadow:0 0 20px var(--pink)}
+.ch{position:relative;width:50%;padding:30px 60px 60px;}
+.ch:nth-child(odd){margin-left:50%}
+.ch:nth-child(even){text-align:right}
+.ch::before{content:"";position:absolute;top:38px;width:22px;height:22px;border-radius:50%;background:var(--ink);border:3px solid var(--pink);box-shadow:0 0 18px var(--pink);transition:background .4s}
+.ch:nth-child(odd)::before{left:-11px}.ch:nth-child(even)::before{right:-11px}
+.ch.in::before{background:var(--sun)}
+.ch small{font-family:"Bebas Neue";letter-spacing:.4em;color:var(--cyan)}
+.ch h3{font-family:Anton;font-size:44px;text-transform:uppercase;line-height:1;margin:6px 0 10px}
+.ch p{opacity:.7;line-height:1.6}
+@media(max-width:760px){.timeline::before,.timeline .fill{left:14px}.ch,.ch:nth-child(odd){width:100%;margin-left:0;padding:20px 0 40px 48px;text-align:left}.ch:nth-child(even){text-align:left}.ch::before,.ch:nth-child(even)::before{left:3px;right:auto}}
+
+/* ---------- CHARACTERS (student types) ---------- */
+#karakter{background:var(--ink)}
+.chars{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;position:relative;z-index:2}
+.char{position:relative;height:440px;border-radius:6px;overflow:hidden;background:var(--g);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.char:hover{transform:translateY(-12px)}
+.char .em{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(1);font-size:140px;transition:transform .6s cubic-bezier(.3,1.6,.5,1);filter:drop-shadow(0 20px 30px #0008)}
+.char:hover .em{transform:translate(-50%,-55%) scale(1.15) rotate(-6deg)}
+.char .nm{position:absolute;left:0;right:0;bottom:0;padding:24px;background:linear-gradient(transparent,#000c)}
+.char .nm h4{font-family:Anton;font-size:34px;text-transform:uppercase;line-height:1}
+.char .nm span{font-family:"Bebas Neue";letter-spacing:.25em;opacity:.8}
+.char .stripes{position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent 0 30px,#ffffff10 30px 60px);animation:stripes 4s linear infinite}
+@keyframes stripes{to{background-position:85px 0}}
+.char .skill{position:absolute;top:20px;left:20px;right:20px;display:grid;gap:6px;font-family:"Bebas Neue";letter-spacing:.15em;font-size:13px;opacity:0;transform:translateY(-10px);transition:.4s}
+.char:hover .skill{opacity:1;transform:none}
+.char .skill div{display:flex;align-items:center;gap:8px}
+.char .skill div b{flex:1;height:5px;background:#0006;position:relative;font-weight:400}
+.char .skill div b::after{content:"";position:absolute;inset:0;width:var(--v);background:#fff;box-shadow:0 0 8px #fff}
+
+/* ---------- CTA ---------- */
+#kayit{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(circle at 50% 100%,#ff2e8866,transparent 55%),radial-gradient(circle at 50% 0%,#7b2ff744,transparent 50%),var(--ink)}
+#kayit canvas{position:absolute;inset:0;width:100%;height:100%}
+#kayit .inner{position:relative;z-index:2}
+.big-cta{font-family:Anton;font-size:clamp(70px,14vw,220px);line-height:.85;text-transform:uppercase}
+.big-cta .l1{display:block;color:transparent;-webkit-text-stroke:2px #fff}
+.big-cta .l2{display:block;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--sun),var(--pink),var(--cyan));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradmove 4s linear infinite;filter:drop-shadow(0 0 40px #ff2e8899)}
+@keyframes gradmove{to{background-position:200% 0}}
+#kayit .btn{margin-top:46px;font-size:30px;padding:22px 60px}
+
+/* mission passed overlay */
+#passed{position:fixed;inset:0;z-index:9990;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .4s}
+#passed.show{opacity:1;pointer-events:auto}
+#passed::before{content:"";position:absolute;inset:0;background:#08000fb0;backdrop-filter:blur(6px) saturate(1.4)}
+#passed .mp{position:relative;font-family:Anton;font-size:clamp(50px,10vw,140px);text-transform:uppercase;line-height:1.05;padding:.1em .05em 0;text-align:center;
+  background:linear-gradient(180deg,#fff3a8,var(--sun) 40%,var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 0 #6a2a00) drop-shadow(0 0 40px #ffd23f88);transform:scale(3);opacity:0;transition:transform .7s cubic-bezier(.2,1.4,.4,1),opacity .4s}
+#passed.show .mp{transform:scale(1);opacity:1}
+#passed .rs{position:relative;font-family:"Bebas Neue";font-size:clamp(26px,3vw,40px);letter-spacing:.2em;margin-top:18px;color:#fff;opacity:0;transform:translateY(20px);transition:.6s .5s}
+#passed.show .rs{opacity:1;transform:none}
+#passed .rs b{color:#7dff8a;font-weight:400;text-shadow:0 0 14px #3dff6a}
+#passed .close{position:relative;margin-top:36px;font-family:"Bebas Neue";letter-spacing:.3em;opacity:.6;font-size:16px}
+
+footer{padding:60px 6vw 180px;border-top:1px solid #ffffff12;display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;font-size:14px;opacity:.65;position:relative;z-index:2;background:var(--ink)}
+footer b{font-family:Anton;font-size:28px;letter-spacing:.05em;opacity:1;color:#fff;display:block;margin-bottom:6px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal,.split .w>i{opacity:1;transform:none}}
+@media (hover:none){body,a,button{cursor:auto}#cursor,#cursorDot,#trail{display:none}}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="loader">
+  <div class="logo">IŞIK<small>CITY · VI</small></div>
+  <div class="bar"><i id="lbar"></i></div>
+  <div class="pct" id="lpct">YÜKLENİYOR 0%</div>
+  <div class="tip" id="ltip">İPUCU: Kampüsü keşfetmek için aşağı kaydır. Ne kadar ilerlersen, aranma seviyen o kadar yükselir.</div>
+</div>
+
+<div id="cursor"></div><div id="cursorDot"></div>
+<canvas id="trail"></canvas>
+<div class="scan"></div><div class="noise"></div>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="money" id="money">$000000000</div>
+  <div class="stars" id="stars"></div>
+  <div class="lvl" id="lvlText">ARANMA SEVİYESİ: 0</div>
+</div>
+<div class="radar">
+  <div class="me"></div>
+  <span class="blip" style="left:28%;top:30%;background:var(--pink)"></span>
+  <span class="blip" style="left:70%;top:62%;background:var(--sun);animation-delay:.5s"></span>
+  <span class="blip" style="left:62%;top:22%;background:var(--cyan);animation-delay:.9s"></span>
+  <div class="health"><i></i><i></i></div>
+</div>
+
+<nav>
+  <div class="brand">IŞIK CITY</div>
+  <a class="l" href="#gorevler">Görevler</a>
+  <a class="l" href="#wanted">Aranıyor</a>
+  <a class="l" href="#harita">Harita</a>
+  <a class="l" href="#hikaye">Hikaye</a>
+  <a class="l" href="#kayit">Kayıt</a>
+</nav>
+
+<!-- HERO -->
+<header id="hero">
+  <div class="rays" data-depth="0.02"></div>
+  <div class="sun glow" data-depth="0.03"></div>
+  <div class="sun" data-depth="0.03"></div>
+  <canvas id="heroCanvas"></canvas>
+  <div class="skyline" data-depth="0.05">
+    <svg viewBox="0 0 1600 300" preserveAspectRatio="none">
+      <defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a0a52"/><stop offset="1" stop-color="#14001f"/></linearGradient></defs>
+      <path fill="url(#bg1)" d="M0 300V190h40v-40h30v-60h50v70h20v-110h70v150h30V120h40v-30h40v60h25V60h60v120h30v-80h50v60h40V40l40-30 40 30v150h30v-90h70v110h40V80h30V50h50v90h40v-60h30v110h50v-150h60v160h30V110h40v-30h50v120h30v-90h60v100h40V60h50v140h30v-70h60v170z"/>
+      <g fill="#ffd23f" opacity=".75">
+        <rect x="80" y="110" width="5" height="7"/><rect x="95" y="130" width="5" height="7"/><rect x="190" y="70" width="5" height="7"/><rect x="205" y="100" width="5" height="7"/>
+        <rect x="335" y="90" width="5" height="7"/><rect x="350" y="120" width="5" height="7"/><rect x="545" y="60" width="5" height="7"/><rect x="560" y="100" width="5" height="7"/><rect x="560" y="140" width="5" height="7"/>
+        <rect x="770" y="80" width="5" height="7"/><rect x="785" y="120" width="5" height="7"/><rect x="1000" y="110" width="5" height="7"/><rect x="1150" y="120" width="5" height="7"/><rect x="1320" y="90" width="5" height="7"/><rect x="1335" y="130" width="5" height="7"/><rect x="1500" y="150" width="5" height="7"/>
+      </g>
+      <g fill="#29f0ff" opacity=".8"><rect x="1015" y="140" width="5" height="7"/><rect x="430" y="100" width="5" height="7"/><rect x="1190" y="160" width="5" height="7"/></g>
+    </svg>
+  </div>
+  <div class="sea"><div class="refl"></div></div>
+  <div class="grid-floor"><div></div></div>
+  <div class="palm l" data-depth="0.09"><svg viewBox="0 0 300 600"><use href="#palmShape"/></svg></div>
+  <div class="palm l2" data-depth="0.06"><svg viewBox="0 0 300 600"><use href="#palmShape"/></svg></div>
+  <div class="palm r" data-depth="0.1"><svg viewBox="0 0 300 600"><use href="#palmShape"/></svg></div>
+  <div class="palm r2" data-depth="0.06"><svg viewBox="0 0 300 600"><use href="#palmShape"/></svg></div>
+  <div class="vignette"></div>
+  <div class="hero-content">
+    <div class="hero-kicker" id="hk">IŞIK ÜNİVERSİTESİ SUNAR</div>
+    <h1 class="hero-title glitch" data-t="IŞIK" id="ht"><span>I</span><span>Ş</span><span>I</span><span>K</span></h1>
+    <div class="hero-sub" id="hs">Geleceği çalmaya hazır mısın?</div>
+    <div class="hero-cta" id="hc">
+      <a class="btn" href="#kayit" data-hover>Oyuna Başla</a>
+      <a class="btn ghost" href="#gorevler" data-hover>Görevleri Gör</a>
+    </div>
+  </div>
+  <div class="scroll-hint">KAYDIR<i></i></div>
+</header>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="palmShape" viewBox="0 0 300 600">
+    <g fill="#0d0018">
+      <path d="M150 600 C140 480 128 360 150 200 C152 190 158 190 160 200 C150 360 160 480 172 600Z"/>
+      <path d="M155 200 C110 150 50 150 0 190 C60 165 110 175 150 210Z"/>
+      <path d="M155 200 C120 130 70 100 10 110 C70 120 120 150 150 205Z"/>
+      <path d="M155 200 C150 130 130 70 90 30 C130 80 145 140 152 205Z"/>
+      <path d="M155 200 C180 130 220 90 280 80 C220 110 185 150 158 205Z"/>
+      <path d="M155 200 C210 160 260 170 300 210 C250 185 200 185 160 210Z"/>
+      <path d="M155 200 C200 200 230 230 250 290 C220 245 190 225 155 210Z"/>
+      <path d="M155 200 C110 210 80 240 60 300 C95 250 120 230 152 212Z"/>
+      <circle cx="150" cy="212" r="8"/><circle cx="162" cy="215" r="7"/><circle cx="144" cy="222" r="6"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="marquee"><div class="track" id="mq1"></div></div>
+<div class="marquee b"><div class="track" id="mq2"></div></div>
+
+<!-- MISSIONS -->
+<section id="gorevler">
+  <div class="blob" style="width:500px;height:500px;background:var(--purple);top:-100px;right:-120px"></div>
+  <div class="blob" style="width:400px;height:400px;background:var(--pink);bottom:0;left:-150px"></div>
+  <div class="sec-head">
+    <div class="sec-num">01 // ANA GÖREVLER</div>
+    <h2 class="sec-title split"><span class="grad">Fakülteni</span> <span class="out">Seç.</span></h2>
+    <p class="sec-desc reveal">Her fakülte yeni bir görev hattı. Her ders yeni bir yetenek. Zorluk seviyesini sen belirle, ödülü diplomanla al.</p>
+  </div>
+  <div class="missions" id="missions"></div>
+</section>
+
+<!-- WANTED / STATS -->
+<section id="wanted">
+  <div class="blob" style="width:600px;height:600px;background:var(--orange);top:20%;left:30%;opacity:.18"></div>
+  <div class="poster-wrap">
+    <div class="poster reveal" id="poster">
+      <div class="sub">IŞIK CITY POLİS DEPARTMANI</div>
+      <h4>ARANIYOR</h4>
+      <div class="photo"></div>
+      <div class="sub">SUÇU: AŞIRI YETENEK</div>
+      <div class="reward-p">ÖDÜL: BURS</div>
+      <div class="stamp">KABUL EDİLDİ</div>
+    </div>
+    <div>
+      <div class="sec-num">02 // İSTATİSTİKLER</div>
+      <h2 class="sec-title split" style="margin-bottom:40px">Rakamlar <span class="grad">Yalan Söylemez</span></h2>
+      <div class="stats">
+        <div class="stat reveal" style="--c:var(--sun)"><div class="n" data-count="1996">0</div><div class="t">Kuruluş Yılı</div></div>
+        <div class="stat reveal" style="--c:var(--pink)"><div class="n" data-count="2" data-suffix="">0</div><div class="t">Kampüs: Şile & Maslak</div></div>
+        <div class="stat reveal" style="--c:var(--cyan)"><div class="n" data-count="100" data-suffix="%">0</div><div class="t">İngilizce Programlar</div></div>
+        <div class="stat reveal" style="--c:#7dff8a"><div class="n" data-count="5" data-suffix="★">0</div><div class="t">Aranma Seviyesi</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HORIZONTAL MAP -->
+<section id="harita">
+  <div class="sticky">
+    <div class="h-title">
+      <div class="sec-num">03 // HARİTA</div>
+      <h2 class="sec-title"><span class="out">Bölgeleri</span><br><span class="grad">Keşfet</span></h2>
+    </div>
+    <div class="h-track" id="htrack"></div>
+    <div class="h-progress"><i id="hprog"></i></div>
+  </div>
+</section>
+
+<!-- CHARACTERS -->
+<section id="karakter">
+  <div class="sec-head">
+    <div class="sec-num">04 // KARAKTERİNİ SEÇ</div>
+    <h2 class="sec-title split">Hangi <span class="grad">Öğrencisin?</span></h2>
+    <p class="sec-desc reveal">Üzerine gel, yeteneklerini gör. Her karakterin kendi oyun tarzı var.</p>
+  </div>
+  <div class="chars" id="chars"></div>
+</section>
+
+<!-- STORY -->
+<section id="hikaye">
+  <div class="sec-head" style="text-align:center">
+    <div class="sec-num">05 // HİKAYE MODU</div>
+    <h2 class="sec-title split">Dört Yıllık <span class="grad">Kampanya</span></h2>
+  </div>
+  <div class="timeline" id="timeline"><div class="fill" id="tfill"></div></div>
+</section>
+
+<!-- CTA -->
+<section id="kayit">
+  <canvas id="ctaCanvas"></canvas>
+  <div class="inner">
+    <div class="sec-num reveal">06 // SON GÖREV</div>
+    <h2 class="big-cta"><span class="l1 split">Hikayeni</span><span class="l2">Başlat</span></h2>
+    <button class="btn" id="joinBtn" data-hover>Kayıt Ol</button>
+  </div>
+</section>
+
+<footer>
+  <div><b>IŞIK CITY</b>Işık Üniversitesi temalı konsept tasarım.<br>Hayran yapımı bir çalışmadır; resmi değildir.</div>
+  <div>Şile Kampüsü · Maslak Kampüsü<br>İstanbul</div>
+  <div>© 2026 · Işıklar asla sönmez.</div>
+</footer>
+
+<div id="passed">
+  <div class="mp">Görev<br>Tamamlandı</div>
+  <div class="rs">SAYGINLIK <b>+∞</b> &nbsp;·&nbsp; BURS <b>$1.000.000</b></div>
+  <div class="close">KAPATMAK İÇİN TIKLA</div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const mouse={x:innerWidth/2,y:innerHeight/2,nx:0,ny:0};
+
+/* ---------- DATA ---------- */
+const missions=[
+ {i:"⚙️",t:"Mühendislik",d:"Bilgisayar, elektrik-elektronik, makine, endüstri. Kodla, inşa et, sistemi hackle.",s:5,r:"$950.000",c1:"#29f0ff",c2:"#7b2ff7"},
+ {i:"🎨",t:"Sanat, Tasarım & Mimarlık",d:"Mimarlık, iç mimarlık, görsel iletişim. Şehri baştan çiz, gün batımını yeniden tasarla.",s:4,r:"$780.000",c1:"#ff2e88",c2:"#ffd23f"},
+ {i:"💼",t:"İktisadi & İdari Bilimler",d:"İşletme, ekonomi, uluslararası ilişkiler. İmparatorluğunu sıfırdan kur.",s:4,r:"$820.000",c1:"#ffd23f",c2:"#ff8a3d"},
+ {i:"🧠",t:"Sosyal Bilimler",d:"Psikoloji ve daha fazlası. Şehrin insanlarını oku, oyunun kurallarını anla.",s:3,r:"$640.000",c1:"#7dff8a",c2:"#29f0ff"},
+ {i:"🔬",t:"Fen Bilimleri",d:"Matematik ve fizik. Evrenin kaynak kodunu çöz.",s:5,r:"$900.000",c1:"#b98cff",c2:"#ff2e88"},
+ {i:"🎓",t:"Lisansüstü",d:"Yüksek lisans ve doktora. Final boss seviyesine hoş geldin.",s:5,r:"$1.200.000",c1:"#ff8a3d",c2:"#29f0ff"},
+];
+const locs=[
+ {e:"🌊",n:"Şile Kampüsü",s:"KARADENİZ KIYISI",d:"Ormanla deniz arasında, gün batımına karşı ders çalış. Ana üs burası.",bg:"linear-gradient(180deg,#1a0a40,#7b2ff7 40%,#ff2e88 70%,#ffb03d)",g:"#ff2e88"},
+ {e:"🏙️",n:"Maslak Kampüsü",s:"ŞEHİR MERKEZİ",d:"Gökdelenlerin arasında. İş dünyasıyla burun buruna, neon ışıklar altında.",bg:"linear-gradient(180deg,#02101f,#0a3d6b 45%,#29f0ff 90%)",g:"#29f0ff"},
+ {e:"📚",n:"Kütüphane",s:"GİZLİ SIĞINAK",d:"Sınav haftası güvenli bölge. Kahve ikmali sınırsız.",bg:"linear-gradient(180deg,#1f0a00,#7a3a00 50%,#ffd23f)",g:"#ffd23f"},
+ {e:"🧪",n:"Laboratuvarlar",s:"AR-GE BÖLGESİ",d:"Prototipler, robotlar, yapay zekâ. Ekipmanını buradan al.",bg:"linear-gradient(180deg,#001a0a,#0a6b3d 50%,#7dff8a)",g:"#7dff8a"},
+ {e:"🎉",n:"Öğrenci Kulüpleri",s:"YAN GÖREVLER",d:"Onlarca kulüp, etkinlik, festival. Ekibini kur, şehri ele geçir.",bg:"linear-gradient(180deg,#200030,#a0178a 50%,#ff8a3d)",g:"#ff8a3d"},
+];
+const chars=[
+ {e:"👩‍💻",n:"Hacker",r:"Mühendis",g:"linear-gradient(160deg,#29f0ff,#7b2ff7)",sk:[["KOD",95],["KAHVE",100],["UYKU",15]]},
+ {e:"🧑‍🎨",n:"Vizyoner",r:"Tasarımcı",g:"linear-gradient(160deg,#ff2e88,#ffd23f)",sk:[["YARATICILIK",98],["ESTETİK",92],["DEADLINE",40]]},
+ {e:"🕴️",n:"Patron",r:"Girişimci",g:"linear-gradient(160deg,#ffd23f,#ff8a3d)",sk:[["NETWORK",96],["KARİZMA",90],["SABIR",35]]},
+ {e:"🧑‍🔬",n:"Dahi",r:"Araştırmacı",g:"linear-gradient(160deg,#7dff8a,#0a6b3d)",sk:[["ZEKÂ",99],["MERAK",100],["SOSYAL",45]]},
+];
+const story=[
+ ["1. SINIF","Giriş Sahnesi","Şehre yeni geldin. Haritayı öğren, ekibini bul, ilk yeteneklerini aç."],
+ ["2. SINIF","Bölgeyi Tanı","Ana dersler, ilk projeler, kulüplerde ilk itibar. Seviye atlama zamanı."],
+ ["3. SINIF","Büyük Vurgun","Staj, Erasmus, takım projeleri. Gerçek dünyaya ilk soygun."],
+ ["4. SINIF","Final Görevi","Bitirme projesi. Boss savaşı. Ödül: diploma ve açık dünya kariyer."],
+ ["MEZUNİYET","Jenerik Akarken","Kep havaya. Ama oyun bitmedi — bu sadece devam oyunu için bir başlangıç."],
+];
+
+/* ---------- BUILD ---------- */
+const starPath='<svg viewBox="0 0 24 24"><path d="M12 1.5l3.1 6.9 7.4.7-5.6 5 1.7 7.4L12 17.6l-6.6 3.9 1.7-7.4-5.6-5 7.4-.7z"/></svg>';
+$('#stars').innerHTML=starPath.repeat(5);
+const mqWords=["Işık Üniversitesi","<b>★★★★★</b>","Şile","Maslak","Mühendislik","<b>$$$</b>","Tasarım","Girişimcilik","<b>WANTED</b>","Gelecek"];
+$('#mq1').innerHTML=(mqWords.map(w=>`<span>${w}</span>`).join('')).repeat(2);
+$('#mq2').innerHTML=(["Görevi Kabul Et","Seviye Atla","Kampüsü Keşfet","Burs Kazan","Ekibini Kur","Işıkları Yak"].map(w=>`<span>${w} ✦</span>`).join('')).repeat(2);
+
+$('#missions').innerHTML=missions.map((m,k)=>`
+ <div class="mission reveal" style="--c1:${m.c1};--c2:${m.c2};transition-delay:${k*.08}s" data-hover>
+  <div class="shine"></div>
+  <div class="tag"><span>GÖREV 0${k+1}</span><span class="mstars">${[1,2,3,4,5].map(n=>`<i class="${n<=m.s?'f':''}"></i>`).join('')}</span></div>
+  <div class="icon">${m.i}</div><h3>${m.t}</h3><p>${m.d}</p>
+  <div class="reward"><span>ÖDÜL</span><b>${m.r}</b></div>
+ </div>`).join('');
+
+$('#htrack').innerHTML=locs.map(l=>`
+ <div class="loc" style="--bg:${l.bg};--glow:${l.g}" data-hover>
+  <div class="scene">${sceneSVG(l.g)}</div>
+  <div class="pin">${l.e}</div>
+  <div class="info"><small>${l.s}</small><h3>${l.n}</h3><p>${l.d}</p></div>
+ </div>`).join('');
+function sceneSVG(c){
+  let b='';for(let i=0;i<14;i++){const w=30+Math.random()*50,h=60+Math.random()*200,x=i*42-20;b+=`<rect x="${x}" y="${400-h}" width="${w}" height="${h}" fill="#08000f" opacity="${.6+Math.random()*.4}"/>`;
+   for(let j=0;j<6;j++) if(Math.random()>.5) b+=`<rect x="${x+6+Math.random()*(w-12)}" y="${400-h+10+Math.random()*(h-20)}" width="4" height="6" fill="${c}" opacity=".9"/>`}
+  return `<svg viewBox="0 0 560 400" preserveAspectRatio="xMidYMax slice" style="width:100%;height:100%"><circle cx="400" cy="140" r="70" fill="#fff" opacity=".18"/>${b}</svg>`;
+}
+$('#chars').innerHTML=chars.map(c=>`
+ <div class="char reveal" style="--g:${c.g}" data-hover>
+  <div class="stripes"></div>
+  <div class="skill">${c.sk.map(s=>`<div>${s[0]}<b style="--v:${s[1]}%"></b></div>`).join('')}</div>
+  <div class="em">${c.e}</div>
+  <div class="nm"><span>${c.r}</span><h4>${c.n}</h4></div>
+ </div>`).join('');
+$('#timeline').insertAdjacentHTML('beforeend',story.map(s=>`<div class="ch reveal"><small>${s[0]}</small><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join(''));
+
+// split text
+$$('.split').forEach(el=>{
+  const walk=n=>{[...n.childNodes].forEach(c=>{
+    if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(w=>{
+      if(!w.trim()){f.append(w);return}const s=document.createElement('span');s.className='w';s.innerHTML=`<i>${w}</i>`;f.append(s)});c.replaceWith(f)}
+    else if(c.nodeType===1&&!c.classList.contains('w'))walk(c)})};
+  walk(el);el.querySelectorAll('.w>i').forEach((i,k)=>i.style.transitionDelay=k*.08+'s');
+});
+
+/* ---------- LOADER + INTRO ---------- */
+const tips=["İPUCU: Kampüsü keşfetmek için aşağı kaydır. Ne kadar ilerlersen, aranma seviyen o kadar yükselir.","İPUCU: Görev kartlarının üzerine gelerek 3D efekti dene.","İPUCU: Kayıt butonuna basmak oyunu kazandırır."];
+let p=0;const lt=setInterval(()=>{p+=Math.random()*14;if(p>=100){p=100;clearInterval(lt);setTimeout(intro,350)}
+ $('#lbar').style.width=p+'%';$('#lpct').textContent='YÜKLENİYOR '+Math.floor(p)+'%';if(Math.random()>.85)$('#ltip').textContent=tips[Math.random()*tips.length|0]},110);
+function intro(){
+  $('#loader').classList.add('done');
+  const ease='cubic-bezier(.2,1.3,.4,1)';
+  const anim=(el,kf,o)=>el.animate(kf,{fill:'forwards',easing:ease,...o});
+  anim($('#hk'),[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'none'}],{duration:800,delay:500});
+  $$('#ht span').forEach((s,i)=>anim(s,[{opacity:0,transform:'translateY(120%) rotate(12deg) scale(.6)'},{opacity:1,transform:'none'}],{duration:1100,delay:650+i*120}));
+  anim($('#hs'),[{opacity:0,transform:'rotate(-4deg) scale(.4)'},{opacity:1,transform:'rotate(-4deg) scale(1)'}],{duration:900,delay:1350});
+  anim($('#hc'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:900,delay:1600});
+  setTimeout(()=>burst(innerWidth/2,innerHeight*.45,180),900);
+}
+
+/* ---------- CURSOR + TRAIL ---------- */
+const cur=$('#cursor'),dot=$('#cursorDot');let cx=mouse.x,cy=mouse.y;
+addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;mouse.nx=e.clientX/innerWidth-.5;mouse.ny=e.clientY/innerHeight-.5;
+  dot.style.transform=`translate(${e.clientX-3}px,${e.clientY-3}px)`;trailPts.push({x:e.clientX,y:e.clientY,l:1})});
+document.addEventListener('mouseover',e=>{if(e.target.closest('[data-hover],a,button'))cur.classList.add('big')});
+document.addEventListener('mouseout',e=>{if(e.target.closest('[data-hover],a,button'))cur.classList.remove('big')});
+addEventListener('click',e=>burst(e.clientX,e.clientY,40));
+const tc=$('#trail'),tx=tc.getContext('2d');let trailPts=[];
+
+/* ---------- HERO PARTICLES (light) ---------- */
+const hc=$('#heroCanvas'),hx=hc.getContext('2d');
+const cc=$('#ctaCanvas'),ccx=cc.getContext('2d');
+let W,H,dpr=Math.min(devicePixelRatio,2);
+function resize(){W=innerWidth;H=innerHeight;[hc,tc,cc].forEach(c=>{c.width=W*dpr;c.height=H*dpr});[hx,tx,ccx].forEach(x=>x.setTransform(dpr,0,0,dpr,0,0))}
+resize();addEventListener('resize',resize);
+const cols=['#ff2e88','#ffd23f','#29f0ff','#ff8a3d','#ffffff','#b98cff'];
+const motes=Array.from({length:140},()=>newMote(true));
+function newMote(init){return{x:Math.random()*W,y:init?Math.random()*H:H*.8+Math.random()*40,r:Math.random()*2.2+.4,vy:-(Math.random()*.6+.15),vx:(Math.random()-.5)*.3,c:cols[Math.random()*cols.length|0],a:Math.random()*.8+.2,tw:Math.random()*6}}
+let sparks=[];
+function burst(x,y,n){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=Math.random()*9+2;sparks.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,c:cols[Math.random()*cols.length|0],r:Math.random()*3+1})}}
+const streaks=[];setInterval(()=>{if(streaks.length<4)streaks.push({x:-200,y:Math.random()*H*.4,v:12+Math.random()*10,len:150+Math.random()*200})},1400);
+
+// cta fireworks
+let fw=[];function firework(){const x=Math.random()*W,y=Math.random()*H*.5+H*.1,c=cols[Math.random()*cols.length|0];for(let i=0;i<70;i++){const a=i/70*Math.PI*2,s=Math.random()*4+2;fw.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,c})}}
+let ctaVisible=false;new IntersectionObserver(e=>ctaVisible=e[0].isIntersecting).observe($('#kayit'));setInterval(()=>ctaVisible&&firework(),700);
+
+let t=0,heroVisible=true;new IntersectionObserver(e=>heroVisible=e[0].isIntersecting).observe($('#hero'));
+function frame(){
+  t+=.016;
+  // cursor
+  cx=lerp(cx,mouse.x,.18);cy=lerp(cy,mouse.y,.18);const cw=cur.offsetWidth;cur.style.transform=`translate(${cx-cw/2}px,${cy-cw/2}px)`;
+  // trail
+  tx.clearRect(0,0,W,H);tx.globalCompositeOperation='lighter';
+  trailPts.forEach(p=>p.l-=.04);trailPts=trailPts.filter(p=>p.l>0).slice(-40);
+  for(let i=1;i<trailPts.length;i++){const a=trailPts[i-1],b=trailPts[i];tx.strokeStyle=`hsla(${330+i*2},100%,65%,${b.l*.7})`;tx.lineWidth=b.l*8;tx.lineCap='round';tx.beginPath();tx.moveTo(a.x,a.y);tx.lineTo(b.x,b.y);tx.stroke()}
+  sparks.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.vy+=.15;s.vx*=.97;s.l-=.018;tx.fillStyle=s.c;tx.globalAlpha=Math.max(s.l,0);tx.shadowBlur=14;tx.shadowColor=s.c;tx.beginPath();tx.arc(s.x,s.y,s.r,0,7);tx.fill()});
+  tx.shadowBlur=0;tx.globalAlpha=1;sparks=sparks.filter(s=>s.l>0);
+
+  if(heroVisible){
+    hx.clearRect(0,0,W,H);hx.globalCompositeOperation='lighter';
+    // light beams from mouse (searchlights)
+    for(let k=0;k<2;k++){const bx=k?W*.82:W*.18,ang=Math.sin(t*.6+k*2)*.5-Math.PI/2+(k?-.2:.2);
+      const g=hx.createLinearGradient(bx,H*.7,bx+Math.cos(ang)*H,H*.7+Math.sin(ang)*H);g.addColorStop(0,k?'#29f0ff55':'#ff2e8855');g.addColorStop(1,'transparent');
+      hx.fillStyle=g;hx.beginPath();hx.moveTo(bx,H*.7);hx.lineTo(bx+Math.cos(ang-.06)*H*1.3,H*.7+Math.sin(ang-.06)*H*1.3);hx.lineTo(bx+Math.cos(ang+.06)*H*1.3,H*.7+Math.sin(ang+.06)*H*1.3);hx.fill()}
+    // mouse glow
+    const mg=hx.createRadialGradient(mouse.x,mouse.y,0,mouse.x,mouse.y,260);mg.addColorStop(0,'#ff8a3d40');mg.addColorStop(1,'transparent');hx.fillStyle=mg;hx.fillRect(0,0,W,H);
+    motes.forEach((m,i)=>{m.x+=m.vx+mouse.nx*-.6;m.y+=m.vy;m.tw+=.05;
+      const dx=m.x-mouse.x,dy=m.y-mouse.y,d=Math.hypot(dx,dy);if(d<120){m.x+=dx/d*2;m.y+=dy/d*2}
+      if(m.y<-10||m.x<-10||m.x>W+10)motes[i]=newMote();
+      hx.globalAlpha=m.a*(.5+Math.sin(m.tw)*.5);hx.fillStyle=m.c;hx.shadowBlur=12;hx.shadowColor=m.c;hx.beginPath();hx.arc(m.x,m.y,m.r,0,7);hx.fill()});
+    hx.shadowBlur=0;hx.globalAlpha=1;
+    streaks.forEach(s=>{s.x+=s.v;const g=hx.createLinearGradient(s.x-s.len,s.y,s.x,s.y+s.len*.2);g.addColorStop(0,'transparent');g.addColorStop(1,'#fff');hx.strokeStyle=g;hx.lineWidth=2;hx.beginPath();hx.moveTo(s.x-s.len,s.y-s.len*.2*-1);hx.lineTo(s.x,s.y+s.len*.2);hx.stroke()});
+    for(let i=streaks.length-1;i>=0;i--)if(streaks[i].x>W+400)streaks.splice(i,1);
+    // parallax
+    $$('[data-depth]').forEach(el=>{const d=+el.dataset.depth;const base=el.classList.contains('sun')||el.classList.contains('rays')?'translate(-50%,-50%) ':'';
+      el.style.transform=base+`translate(${mouse.nx*-d*600}px,${mouse.ny*-d*300+scrollY*d*3}px)`+(el.classList.contains('r')?' scaleX(-1)':'')});
+  }
+  if(ctaVisible||fw.length){ccx.globalCompositeOperation='source-over';ccx.fillStyle='rgba(8,0,15,.18)';ccx.fillRect(0,0,W,H);ccx.globalCompositeOperation='lighter';
+    fw.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.vx*=.98;p.vy*=.98;p.l-=.012;ccx.globalAlpha=Math.max(p.l,0);ccx.fillStyle=p.c;ccx.beginPath();ccx.arc(p.x,p.y,1.8,0,7);ccx.fill()});
+    ccx.globalAlpha=1;fw=fw.filter(p=>p.l>0)}
+  requestAnimationFrame(frame);
+}
+frame();
+
+/* ---------- SCROLL ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');
+  e.target.querySelectorAll?.('[data-count]').forEach(countUp);if(e.target.matches('[data-count]'))countUp(e.target);
+  if(e.target.querySelector?.('[data-count]')||e.target.dataset.count) {}
+}}),{threshold:.2});
+$$('.reveal,.split,.ch,.poster,.stat').forEach(el=>io.observe(el));
+function countUp(el){if(el.dataset.done)return;el.dataset.done=1;const to=+el.dataset.count,suf=el.dataset.suffix||'';const st=performance.now();
+  (function s(n){const k=Math.min((n-st)/1800,1),v=Math.round(to*(1-Math.pow(1-k,4)));el.textContent=v+suf;if(k<1)requestAnimationFrame(s)})(st)}
+
+let lastStars=-1,money=0;
+const harita=$('#harita'),track=$('#htrack'),tl=$('#timeline');
+function onScroll(){
+  const max=document.documentElement.scrollHeight-innerHeight,pr=scrollY/max;
+  // stars
+  const n=Math.min(5,Math.floor(pr*5.6));
+  if(n!==lastStars){$$('#stars svg').forEach((s,i)=>s.classList.toggle('on',i<n));$('#lvlText').textContent='ARANMA SEVİYESİ: '+n;
+    if(n>lastStars&&lastStars>=0){const st=$('#stars');st.classList.remove('flash');void st.offsetWidth;st.classList.add('flash')}lastStars=n}
+  // money
+  money=Math.floor(pr*999999999);$('#money').textContent='$'+String(money).padStart(9,'0');
+  // horizontal
+  const r=harita.getBoundingClientRect(),hp=clamp(-r.top/(r.height-innerHeight),0,1);
+  track.style.transform=`translateX(${-hp*(track.scrollWidth-innerWidth)}px)`;$('#hprog').style.width=hp*100+'%';
+  [...track.children].forEach(c=>{const b=c.getBoundingClientRect(),off=(b.left+b.width/2-innerWidth/2)/innerWidth;c.style.transform=`perspective(1000px) rotateY(${off*-18}deg) scale(${1-Math.abs(off)*.12})`});
+  // timeline fill
+  const tr=tl.getBoundingClientRect();$('#tfill').style.height=clamp((innerHeight*.6-tr.top)/tr.height,0,1)*100+'%';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- 3D TILT ---------- */
+$$('.mission').forEach(c=>{
+  c.addEventListener('mousemove',e=>{const b=c.getBoundingClientRect(),x=(e.clientX-b.left)/b.width,y=(e.clientY-b.top)/b.height;
+    c.style.transform=`rotateY(${(x-.5)*22}deg) rotateX(${(.5-y)*22}deg) translateZ(10px)`;c.style.setProperty('--mx',x*100+'%');c.style.setProperty('--my',y*100+'%')});
+  c.addEventListener('mouseleave',()=>c.style.transform='');
+});
+
+/* ---------- MAGNETIC BUTTONS ---------- */
+$$('.btn').forEach(b=>{b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px) scale(1.05)`});
+  b.addEventListener('mouseleave',()=>b.style.transform='')});
+
+/* ---------- MISSION PASSED ---------- */
+$('#joinBtn').addEventListener('click',e=>{e.stopPropagation();$('#passed').classList.add('show');for(let i=0;i<6;i++)setTimeout(()=>burst(Math.random()*innerWidth,Math.random()*innerHeight*.6,90),i*160)});
+$('#passed').addEventListener('click',()=>$('#passed').classList.remove('show'));
+</script>
+</body>
+</html>
